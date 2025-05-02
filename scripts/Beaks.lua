@@ -4,7 +4,7 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield", true))(
 local Window =
     Rayfield:CreateWindow(
     {
-        Name = "Beaks | Shipping Container",
+        Name = "Beaks | TropicanaHub",
         LoadingTitle = "Beaks | TropicanaHub",
         LoadingSubtitle = "by TropicanaHub",
         ConfigurationSaving = {Enabled = false}
@@ -15,7 +15,7 @@ local Window =
 local MainTab = Window:CreateTab("Main")
 local AutoTab = Window:CreateTab("Auto")
 local EspTab = Window:CreateTab("ESP")
-local OPTab = Window:CreateTab("Bring ALL OP")
+local OPTab = Window:CreateTab("TP ALL OP")
 local TeleportTab = Window:CreateTab("Teleports")
 local MiscTab = Window:CreateTab("Misc")
 
@@ -360,6 +360,18 @@ MainTab:CreateToggle(
     }
 )
 
+-- Hitbox Expander Toggle
+MainTab:CreateToggle(
+    {
+        Name = "Hitbox Expander",
+        CurrentValue = false,
+        Callback = function(val)
+            Settings.HitboxExpander = val
+            ExpandHitboxes(val)
+        end
+    }
+)
+
 -- Hitbox Size Slider
 MainTab:CreateSlider(
     {
@@ -450,73 +462,6 @@ MainTab:CreateToggle(
     }
 )
 
--- Default Fire Rate
-local FireRateValue = 0
-
--- Function to apply fire rate to tools
-local function ApplyFireRate(value)
-    pcall(function()
-        FireRateValue = value
-        local Client = game:GetService("Players").LocalPlayer
-
-        -- Unequip currently held tools
-        if Client and Client.Character then
-            local humanoid = Client.Character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid:UnequipTools()
-            end
-        end
-
-        -- Apply new FireRate to tools in backpack
-        if Client and Client:FindFirstChild("Backpack") then
-            for _, tool in pairs(Client.Backpack:GetChildren()) do
-                if tool:IsA("Tool") and tool:GetAttribute("FireRate") then
-                    tool:SetAttribute("FireRate", FireRateValue)
-                end
-            end
-        end
-    end)
-end
-
--- Fire Rate Slider UI inside your tab (e.g., MainTab)
-MainTab:CreateSlider({
-    Name = "Fire Rate",
-    Range = {0, 0.5},
-    Increment = 0.05,
-    Suffix = "s",
-    CurrentValue = FireRateValue,
-    Callback = function(value)
-        ApplyFireRate(value)
-    end
-})
-
-
--- Add this connection with your other connections
-LocalPlayer.CharacterAdded:Connect(function(character)
-    character.ChildAdded:Connect(function(child)
-        pcall(function()
-            if child:IsA("Tool") and RapidFireEnabled and child:GetAttribute("FireRate") then
-                child:SetAttribute("FireRate", 0)
-            end
-        end)
-    end)
-end)
-
-MainTab:CreateToggle({
-    Name = "Instant Fire",
-    CurrentValue = false,
-    Callback = function(value)
-        pcall(function()
-            ToggleRapidFire(value)
-            Rayfield:Notify({
-                Title = "Instant Fire",
-                Content = value and "Enabled - Guns will fire instantly!" or "Disabled",
-                Duration = 3,
-                Image = 4483362458
-            })
-        end)
-    end
-})
 -- AUTO TAB
 AutoTab:CreateToggle(
     {
@@ -620,10 +565,10 @@ AutoTab:CreateButton(
                 task.wait(0.1)
             end
 
-            
+            -- Return to original position
             hrp.CFrame = originalCFrame
 
-        
+            -- Notify completion
             Rayfield:Notify(
                 {
                     Title = "Auto-Sell Complete",
@@ -636,6 +581,7 @@ AutoTab:CreateButton(
     }
 )
 
+-- Auto Dart Toggle
 AutoTab:CreateToggle(
     {
         Name = "Auto Buy Darts",
@@ -671,6 +617,7 @@ AutoTab:CreateToggle(
     }
 )
 
+-- ESP TAB
 EspTab:CreateToggle(
     {
         Name = "Enable Bird ESP",
@@ -681,6 +628,7 @@ EspTab:CreateToggle(
     }
 )
 
+-- Create color pickers for each region
 for regionName, defaultColor in pairs(ESPColors) do
     EspTab:CreateColorPicker(
         {
@@ -688,7 +636,7 @@ for regionName, defaultColor in pairs(ESPColors) do
             Color = defaultColor,
             Callback = function(Value)
                 ESPColors[regionName] = Value
-            
+                -- Update existing ESPs if enabled
                 if ESPEnabled then
                     for bird, espData in pairs(ESPObjects) do
                         for _, obj in pairs(espData) do
@@ -703,6 +651,7 @@ for regionName, defaultColor in pairs(ESPColors) do
     )
 end
 
+-- Create section for additional options
 local SettingsSection = EspTab:CreateSection("ESP Settings")
 
 EspTab:CreateToggle(
@@ -740,6 +689,7 @@ EspTab:CreateSlider(
     }
 )
 
+-- FullBright with loop
 local FullbrightEnabled = false
 MiscTab:CreateToggle(
     {
@@ -750,7 +700,7 @@ MiscTab:CreateToggle(
             local Lighting = game:GetService("Lighting")
 
             if Value then
-                
+                -- Store original values
                 originalLighting = {
                     Brightness = Lighting.Brightness,
                     ClockTime = Lighting.ClockTime,
@@ -759,7 +709,7 @@ MiscTab:CreateToggle(
                     OutdoorAmbient = Lighting.OutdoorAmbient
                 }
 
-                
+                -- Start the fullbright loop
                 task.spawn(
                     function()
                         while FullbrightEnabled do
@@ -782,7 +732,7 @@ MiscTab:CreateToggle(
                     }
                 )
             else
-                
+                -- Restore original values if they were stored
                 if originalLighting.Brightness then
                     Lighting.Brightness = originalLighting.Brightness
                     Lighting.ClockTime = originalLighting.ClockTime
@@ -790,7 +740,7 @@ MiscTab:CreateToggle(
                     Lighting.GlobalShadows = originalLighting.GlobalShadows
                     Lighting.OutdoorAmbient = originalLighting.OutdoorAmbient
                 else
-                    
+                    -- Default fallback values
                     Lighting.Brightness = 1
                     Lighting.ClockTime = 12
                     Lighting.FogEnd = 100000
@@ -811,6 +761,7 @@ MiscTab:CreateToggle(
     }
 )
 
+-- NoFog
 MiscTab:CreateToggle(
     {
         Name = "NoFog",
@@ -834,7 +785,7 @@ MiscTab:CreateToggle(
                     }
                 )
             else
-            
+                -- Restore to either FullBright's value or original
                 Lighting.FogEnd = originalLighting.FogEnd or 1000
                 Rayfield:Notify(
                     {
@@ -875,6 +826,7 @@ MiscTab:CreateToggle(
     }
 )
 
+-- WalkSpeed
 MiscTab:CreateSlider(
     {
         Name = "WalkSpeed",
@@ -1068,6 +1020,7 @@ MiscTab:CreateToggle(
     }
 )
 
+-- Fly Speed Slider
 MiscTab:CreateSlider(
     {
         Name = "Fly Speed",
@@ -1117,6 +1070,7 @@ local function teleportBirds()
     end
 end
 
+-- Update the teleport birds toggle to use the improved function
 OPTab:CreateToggle(
     {
         Name = "Teleport All Birds to You",
@@ -1132,12 +1086,12 @@ OPTab:CreateToggle(
                         Image = 4483362458
                     }
                 )
-                
+                -- Start a loop to continuously teleport birds
                 task.spawn(
                     function()
                         while teleportBirdsEnabled do
                             teleportBirds()
-                            task.wait(1) 
+                            task.wait(1) -- Teleport every second
                         end
                     end
                 )
@@ -1165,18 +1119,55 @@ OPTab:CreateToggle(
     }
 )
 
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+-- Default Fire Rate
+local FireRateValue = 0
 
+-- Function to apply fire rate to tools
+local function ApplyFireRate(value)
+    pcall(function()
+        FireRateValue = value
+        local Client = game:GetService("Players").LocalPlayer
+
+        -- Unequip currently held tools
+        if Client and Client.Character then
+            local humanoid = Client.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid:UnequipTools()
+            end
+        end
+
+        -- Apply new FireRate to tools in backpack
+        if Client and Client:FindFirstChild("Backpack") then
+            for _, tool in pairs(Client.Backpack:GetChildren()) do
+                if tool:IsA("Tool") and tool:GetAttribute("FireRate") then
+                    tool:SetAttribute("FireRate", FireRateValue)
+                end
+            end
+        end
+    end)
+end
+
+-- Fire Rate Slider UI inside your tab (e.g., MainTab)
+MainTab:CreateSlider({
+    Name = "Fire Rate",
+    Range = {0, 0.5},
+    Increment = 0.05,
+    Suffix = "s",
+    CurrentValue = FireRateValue,
+    Callback = function(value)
+        ApplyFireRate(value)
+    end
+})
+
+-- Locations table
 local Locations = {
     ["Beakwoods"] = CFrame.new(520, 160, 68),
     ["Deadlands"] = CFrame.new(-712, 25, -1486),
     ["Mount Beaks"] = CFrame.new(84, 240, 383),
-    ["Quill Lake"] = CFrame.new(-303, 160, -488),
-    ["Secret Spot"] = CFrame.new(-110.967, 411.792, 514.750)
+    ["Quill Lake"] = CFrame.new(-303, 160, -488)
 }
 
-
+-- Create separate buttons for each location instead of dropdown
 TeleportTab:CreateButton(
     {
         Name = "Teleport to Beakswood",
@@ -1293,32 +1284,7 @@ TeleportTab:CreateButton(
     }
 )
 
-TeleportTab:CreateButton(
-    {
-        Name = "Teleport to Watch Tower",
-        Callback = function()
-            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-            local humanoid = character:WaitForChild("Humanoid")
-            local hrp = character:WaitForChild("HumanoidRootPart")
-
-            humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-            task.wait(0.1)
-            hrp.CFrame = CFrame.new(-110.967, 411.792, 514.750)
-            task.wait()
-            humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-
-            Rayfield:Notify(
-                {
-                    Title = "Teleport Success",
-                    Content = "Teleported to Watch Tower!",
-                    Duration = 5,
-                    Image = 4483362458
-                }
-            )
-        end
-    }
-)
-
+-- Add teleport to random bird button with proper error handling
 TeleportTab:CreateButton(
     {
         Name = "Teleport to Random Bird",
@@ -1515,6 +1481,7 @@ local function StartAutoFarm(region)
     workspace.Gravity = originalGravity
 end
 
+-- Connect to Heartbeat with pause detection
 RunService.Heartbeat:Connect(
     function()
         -- Only run if game isn't paused
