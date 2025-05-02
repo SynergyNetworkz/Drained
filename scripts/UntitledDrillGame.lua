@@ -2,9 +2,9 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield", true))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Untitled Drill Game |Drained",
+    Name = "Untitled Drill Game | Drained",
     LoadingTitle = "Untitled Drill Game | Drained",
-    LoadingSubtitle = "By Drained",
+    LoadingSubtitle = "Get Drained",
     ConfigurationSaving = {Enabled = false}
 })
 
