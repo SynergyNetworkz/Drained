@@ -1,4 +1,3 @@
--- GUI Library
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield", true))()
 
 local Window =
@@ -11,7 +10,6 @@ local Window =
     }
 )
 
--- Initialize tabs
 local MainTab = Window:CreateTab("Main")
 local AutoTab = Window:CreateTab("Auto")
 local EspTab = Window:CreateTab("ESP")
@@ -19,7 +17,6 @@ local OPTab = Window:CreateTab("TP ALL OP")
 local TeleportTab = Window:CreateTab("Teleports")
 local MiscTab = Window:CreateTab("Misc")
 
--- Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
@@ -29,7 +26,6 @@ local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local UserInputService = game:GetService("UserInputService")
 
--- Variables
 local LocalPlayer = Players.LocalPlayer
 local originalProperties = {}
 local originalSizes = {}
@@ -38,7 +34,6 @@ local ClientBirds =
     workspace:FindFirstChild("Regions") and workspace.Regions:FindFirstChild("Beakwoods") and
     workspace.Regions.Beakwoods:FindFirstChild("ClientBirds")
 
--- Initialize Settings
 local Settings = {
     AutoFarm = {
         Beakwoods = false,
@@ -73,7 +68,6 @@ local Settings = {
     InfiniteJump = false
 }
 
--- ESP Configuration
 local ESPColors = {
     ["Beakwoods"] = Color3.fromRGB(0, 255, 0),
     ["Deadlands"] = Color3.fromRGB(255, 0, 0),
@@ -84,7 +78,6 @@ local ESPColors = {
 local ESPEnabled = false
 local ESPObjects = {}
 
--- Update ESP to always show full bird model and name
 function CreateESP(bird, regionName)
     local highlight = Instance.new("Highlight")
     highlight.Name = "ESP_Highlight"
@@ -120,12 +113,11 @@ function CreateESP(bird, regionName)
     end
 end
 
--- Function to toggle ESP
 function ToggleESP(state)
     ESPEnabled = state
 
     if ESPEnabled then
-        -- Add ESP to existing birds
+        
         for _, regionName in pairs({"Beakwoods", "Deadlands", "Mount Beaks", "Quill Lake"}) do
             local region = workspace.Regions:FindFirstChild(regionName)
             if region then
@@ -137,7 +129,7 @@ function ToggleESP(state)
                         end
                     end
 
-                    -- Connect to detect new birds
+                    
                     clientBirds.ChildAdded:Connect(
                         function(bird)
                             if ESPEnabled and bird:IsA("Model") then
@@ -149,14 +141,14 @@ function ToggleESP(state)
             end
         end
     else
-        -- Remove all ESP
+        
         for bird, _ in pairs(ESPObjects) do
             RemoveESP(bird)
         end
     end
 end
 
--- Function to expand hitboxes
+
 local function ExpandHitboxes(enable)
     for _, regionName in pairs({"Beakwoods", "Deadlands", "Mount Beaks", "Quill Lake"}) do
         local region = workspace.Regions:FindFirstChild(regionName)
@@ -192,7 +184,7 @@ local function ExpandHitboxes(enable)
     end
 end
 
--- Function to get a random bird from a region
+
 local function GetRandomBird(region)
     local clientBirds =
         workspace.Regions:FindFirstChild(region) and workspace.Regions[region]:FindFirstChild("ClientBirds")
@@ -275,7 +267,7 @@ local function StartAutoFarm(region)
                     )
                     CurrentTween:Play()
 
-                    -- Follow the bird for up to 10 seconds
+                    
                     local followStart = os.clock()
                     while os.clock() - followStart < Settings.AutoFarm.BirdDuration and
                         Settings.AutoFarm[region:gsub(" ", "")] do
@@ -287,11 +279,11 @@ local function StartAutoFarm(region)
                         )
 
                         if pivotSuccess then
-                            -- Keep camera aimed at bird
+                            
                             local aimPos = pivotUpdate.Position
                             Camera.CFrame = CFrame.new(Camera.CFrame.Position, aimPos)
 
-                            -- Auto shoot if enabled
+                            
                             if Settings.AutoFarm.AutoShoot then
                                 local screenPoint = Camera:WorldToViewportPoint(aimPos)
                                 local shootX =
@@ -320,7 +312,7 @@ local function StartAutoFarm(region)
     workspace.Gravity = originalGravity
 end
 
--- Create toggles for each region
+
 for _, name in ipairs({"Beakwoods", "Deadlands", "Mount Beaks", "Quill Lake"}) do
     local cleanName = name:gsub(" ", "")
     MainTab:CreateToggle(
@@ -341,7 +333,7 @@ for _, name in ipairs({"Beakwoods", "Deadlands", "Mount Beaks", "Quill Lake"}) d
     )
 end
 
--- Add Auto Shoot toggle
+
 MainTab:CreateToggle(
     {
         Name = "Auto Shoot",
@@ -360,7 +352,7 @@ MainTab:CreateToggle(
     }
 )
 
--- Hitbox Expander Toggle
+
 MainTab:CreateToggle(
     {
         Name = "Hitbox Expander",
@@ -372,7 +364,7 @@ MainTab:CreateToggle(
     }
 )
 
--- Hitbox Size Slider
+
 MainTab:CreateSlider(
     {
         Name = "Hitbox Size",
@@ -389,7 +381,7 @@ MainTab:CreateSlider(
     }
 )
 
--- Add a new toggle for freezing birds
+
 MainTab:CreateToggle(
     {
         Name = "Freeze Birds in Place",
@@ -404,7 +396,7 @@ MainTab:CreateToggle(
                         character.HumanoidRootPart.CFrame.LookVector * 10
                 end
 
-                -- Freeze all existing birds
+                
                 for _, regionName in pairs({"Beakwoods", "Deadlands", "Mount Beaks", "Quill Lake"}) do
                     local region = workspace.Regions:FindFirstChild(regionName)
                     if region then
@@ -440,7 +432,7 @@ MainTab:CreateToggle(
                     }
                 )
             else
-                -- When disabling, restore original properties
+                
                 for part, props in pairs(originalProperties) do
                     if part and part.Parent then
                         part.Anchored = props.Anchored
@@ -462,7 +454,7 @@ MainTab:CreateToggle(
     }
 )
 
--- AUTO TAB
+
 AutoTab:CreateToggle(
     {
         Name = "Auto Sell",
@@ -484,7 +476,6 @@ AutoTab:CreateToggle(
     }
 )
 
--- Sell Threshold Slider
 AutoTab:CreateSlider(
     {
         Name = "Sell Threshold",
@@ -506,7 +497,7 @@ AutoTab:CreateButton(
             local character = player.Character or player.CharacterAdded:Wait()
             local hrp = character:WaitForChild("HumanoidRootPart")
 
-            -- Check if required services exist
+            
             local Seller =
                 Workspace:FindFirstChild("Regions") and Workspace.Regions:FindFirstChild("Beakwoods") and
                 Workspace.Regions.Beakwoods:FindFirstChild("Useable") and
@@ -540,16 +531,16 @@ AutoTab:CreateButton(
                 return
             end
 
-            -- Use the known pivot CFrame
+            
             local sellerCFrame = CFrame.new(515.973022, 154.072998, 45.8440018, -1, 0, 0, 0, 1, 0, 0, 0, -1)
 
-            -- Save original position
+            
             local originalCFrame = hrp.CFrame
 
-            -- Teleport slightly above the seller's pivot to avoid getting stuck in the model
+            
             hrp.CFrame = sellerCFrame + Vector3.new(0, 5, 0)
 
-            -- Notify user
+            
             Rayfield:Notify(
                 {
                     Title = "Auto-Sell Started",
@@ -559,16 +550,16 @@ AutoTab:CreateButton(
                 }
             )
 
-            -- Sell all items 5 times
+            
             for _ = 1, 5 do
                 SellInventory:InvokeServer("All")
                 task.wait(0.1)
             end
 
-            -- Return to original position
+            
             hrp.CFrame = originalCFrame
 
-            -- Notify completion
+            
             Rayfield:Notify(
                 {
                     Title = "Auto-Sell Complete",
@@ -581,7 +572,6 @@ AutoTab:CreateButton(
     }
 )
 
--- Auto Dart Toggle
 AutoTab:CreateToggle(
     {
         Name = "Auto Buy Darts",
@@ -617,7 +607,6 @@ AutoTab:CreateToggle(
     }
 )
 
--- ESP TAB
 EspTab:CreateToggle(
     {
         Name = "Enable Bird ESP",
@@ -628,7 +617,6 @@ EspTab:CreateToggle(
     }
 )
 
--- Create color pickers for each region
 for regionName, defaultColor in pairs(ESPColors) do
     EspTab:CreateColorPicker(
         {
@@ -636,7 +624,7 @@ for regionName, defaultColor in pairs(ESPColors) do
             Color = defaultColor,
             Callback = function(Value)
                 ESPColors[regionName] = Value
-                -- Update existing ESPs if enabled
+                
                 if ESPEnabled then
                     for bird, espData in pairs(ESPObjects) do
                         for _, obj in pairs(espData) do
@@ -651,7 +639,7 @@ for regionName, defaultColor in pairs(ESPColors) do
     )
 end
 
--- Create section for additional options
+
 local SettingsSection = EspTab:CreateSection("ESP Settings")
 
 EspTab:CreateToggle(
@@ -689,7 +677,7 @@ EspTab:CreateSlider(
     }
 )
 
--- FullBright with loop
+
 local FullbrightEnabled = false
 MiscTab:CreateToggle(
     {
@@ -700,7 +688,7 @@ MiscTab:CreateToggle(
             local Lighting = game:GetService("Lighting")
 
             if Value then
-                -- Store original values
+                
                 originalLighting = {
                     Brightness = Lighting.Brightness,
                     ClockTime = Lighting.ClockTime,
@@ -709,7 +697,7 @@ MiscTab:CreateToggle(
                     OutdoorAmbient = Lighting.OutdoorAmbient
                 }
 
-                -- Start the fullbright loop
+                
                 task.spawn(
                     function()
                         while FullbrightEnabled do
@@ -732,7 +720,7 @@ MiscTab:CreateToggle(
                     }
                 )
             else
-                -- Restore original values if they were stored
+                
                 if originalLighting.Brightness then
                     Lighting.Brightness = originalLighting.Brightness
                     Lighting.ClockTime = originalLighting.ClockTime
@@ -761,7 +749,7 @@ MiscTab:CreateToggle(
     }
 )
 
--- NoFog
+
 MiscTab:CreateToggle(
     {
         Name = "NoFog",
@@ -769,7 +757,7 @@ MiscTab:CreateToggle(
         Callback = function(Value)
             local Lighting = game:GetService("Lighting")
 
-            -- Only store original FogEnd if we haven't already
+            
             if originalLighting.FogEnd == nil then
                 originalLighting.FogEnd = Lighting.FogEnd
             end
@@ -800,7 +788,7 @@ MiscTab:CreateToggle(
     }
 )
 
--- Infinite Jump
+
 MiscTab:CreateToggle(
     {
         Name = "Infinite Jump",
@@ -826,7 +814,7 @@ MiscTab:CreateToggle(
     }
 )
 
--- WalkSpeed
+
 MiscTab:CreateSlider(
     {
         Name = "WalkSpeed",
@@ -847,7 +835,7 @@ MiscTab:CreateSlider(
     }
 )
 
--- Fly
+
 local FLYING = false
 local flyKeyDown, flyKeyUp
 local IYMouse = game:GetService("Players").LocalPlayer:GetMouse()
@@ -1020,7 +1008,7 @@ MiscTab:CreateToggle(
     }
 )
 
--- Fly Speed Slider
+
 MiscTab:CreateSlider(
     {
         Name = "Fly Speed",
@@ -1070,7 +1058,7 @@ local function teleportBirds()
     end
 end
 
--- Update the teleport birds toggle to use the improved function
+
 OPTab:CreateToggle(
     {
         Name = "Teleport All Birds to You",
@@ -1086,17 +1074,17 @@ OPTab:CreateToggle(
                         Image = 4483362458
                     }
                 )
-                -- Start a loop to continuously teleport birds
+                
                 task.spawn(
                     function()
                         while teleportBirdsEnabled do
                             teleportBirds()
-                            task.wait(1) -- Teleport every second
+                            task.wait(1) 
                         end
                     end
                 )
             else
-                -- Restore original properties when disabled
+                
                 for part, props in pairs(originalProperties) do
                     if part and part.Parent then
                         part.Anchored = props.Anchored
@@ -1119,16 +1107,16 @@ OPTab:CreateToggle(
     }
 )
 
--- Default Fire Rate
+
 local FireRateValue = 0
 
--- Function to apply fire rate to tools
+
 local function ApplyFireRate(value)
     pcall(function()
         FireRateValue = value
         local Client = game:GetService("Players").LocalPlayer
 
-        -- Unequip currently held tools
+        
         if Client and Client.Character then
             local humanoid = Client.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -1136,7 +1124,7 @@ local function ApplyFireRate(value)
             end
         end
 
-        -- Apply new FireRate to tools in backpack
+        
         if Client and Client:FindFirstChild("Backpack") then
             for _, tool in pairs(Client.Backpack:GetChildren()) do
                 if tool:IsA("Tool") and tool:GetAttribute("FireRate") then
@@ -1147,7 +1135,7 @@ local function ApplyFireRate(value)
     end)
 end
 
--- Fire Rate Slider UI inside your tab (e.g., MainTab)
+
 MainTab:CreateSlider({
     Name = "Fire Rate",
     Range = {0, 0.5},
@@ -1159,7 +1147,7 @@ MainTab:CreateSlider({
     end
 })
 
--- Locations table
+
 local Locations = {
     ["Beakwoods"] = CFrame.new(520, 160, 68),
     ["Deadlands"] = CFrame.new(-712, 25, -1486),
@@ -1167,7 +1155,7 @@ local Locations = {
     ["Quill Lake"] = CFrame.new(-303, 160, -488)
 }
 
--- Create separate buttons for each location instead of dropdown
+
 TeleportTab:CreateButton(
     {
         Name = "Teleport to Beakswood",
@@ -1284,7 +1272,7 @@ TeleportTab:CreateButton(
     }
 )
 
--- Add teleport to random bird button with proper error handling
+
 TeleportTab:CreateButton(
     {
         Name = "Teleport to Random Bird",
@@ -1303,7 +1291,7 @@ TeleportTab:CreateButton(
 
             local birds = {}
 
-            -- Collect all valid birds
+            
             for _, bird in ipairs(ClientBirds:GetChildren()) do
                 if bird:IsA("Model") then
                     local primaryPart = bird.PrimaryPart or bird:FindFirstChildWhichIsA("BasePart")
@@ -1362,7 +1350,7 @@ local function GetRandomBird(region)
                 end
             )
             if success and pivot then
-                -- Only consider birds that are within reasonable Y level
+                
                 local playerPos = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
                 if math.abs(pivot.Position.Y - playerPos.Y) <= 40 then
                     table.insert(validBirds, bird)
@@ -1401,7 +1389,7 @@ local function StartAutoFarm(region)
             local hrp = character.HumanoidRootPart
             local now = os.clock()
 
-            -- Choose a new bird every 10 seconds
+            
             if not CurrentBird or (now - LastBirdSwitch) > Settings.AutoFarm.BirdDuration then
                 CurrentBird = GetRandomBird(region)
                 LastBirdSwitch = now
@@ -1419,7 +1407,7 @@ local function StartAutoFarm(region)
                 )
 
                 if success and pivot then
-                    -- Tween to bird with offset
+                    
                     local offset = Vector3.new(0, 3, 8)
                     local targetPos = pivot.Position + offset
                     local targetCFrame = CFrame.new(targetPos, pivot.Position)
@@ -1436,7 +1424,7 @@ local function StartAutoFarm(region)
                     )
                     CurrentTween:Play()
 
-                    -- Follow the bird for up to 10 seconds
+                    
                     local followStart = os.clock()
                     while os.clock() - followStart < Settings.AutoFarm.BirdDuration and
                         Settings.AutoFarm[region:gsub(" ", "")] do
@@ -1448,11 +1436,11 @@ local function StartAutoFarm(region)
                         )
 
                         if pivotSuccess then
-                            -- Keep camera aimed at bird
+                           
                             local aimPos = pivotUpdate.Position
                             Camera.CFrame = CFrame.new(Camera.CFrame.Position, aimPos)
 
-                            -- Auto shoot if enabled
+                            
                             if Settings.AutoFarm.AutoShoot then
                                 local screenPoint = Camera:WorldToViewportPoint(aimPos)
                                 local shootX =
@@ -1481,17 +1469,17 @@ local function StartAutoFarm(region)
     workspace.Gravity = originalGravity
 end
 
--- Connect to Heartbeat with pause detection
+
 RunService.Heartbeat:Connect(
     function()
-        -- Only run if game isn't paused
+        
         if game:GetService("Workspace").DistributedGameTime then
             StartAutoFarmLoop()
         end
     end
 )
 
--- Reset on character added
+
 LocalPlayer.CharacterAdded:Connect(
     function(character)
         CurrentBird = nil
@@ -1499,6 +1487,6 @@ LocalPlayer.CharacterAdded:Connect(
             CurrentTween:Cancel()
             CurrentTween = nil
         end
-        task.wait(0.5) -- Brief delay after respawn
+        task.wait(0.5) 
     end
 )
