@@ -1,4 +1,3 @@
--- Rayfield UI
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield", true))()
 
 local Window = Rayfield:CreateWindow({
@@ -10,7 +9,7 @@ local Window = Rayfield:CreateWindow({
 
 local MainTab = Window:CreateTab("Main")
 
--- Services
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
